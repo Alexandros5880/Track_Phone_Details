@@ -1,4 +1,5 @@
 import phonenumbers
+from phonenumbers import carrier
 from phonenumbers import geocoder
 from phonenumbers import COUNTRY_CODE_TO_REGION_CODE
 from opencage.geocoder import OpenCageGeocode
@@ -6,6 +7,8 @@ key = 'ceb00113660c44d4a4d41208236e6b16'
 import folium
 from folium.features import DivIcon
 import webbrowser
+from twilio.rest import Client
+import click
 
 # Get all valid numberscan be exist from start numbers
 def GetValidNumberPrefixs(results, phonenumber):
@@ -33,6 +36,20 @@ def FlatDict(valid_numbers, data):
       d = {'country': k, 'number': v}
       valid_numbers.append(d)
 
+#  Get Phones Companies
+def get_company_from_twilio(phone_number):
+    # Your Twilio Account SID and Auth Token
+    account_sid = 'xxx'
+    auth_token = 'xxx'
+    client = Client(account_sid, auth_token)
+    try:
+        number_info = client.lookups.phone_numbers(phone_number).fetch(type='carrier')
+        company_name = number_info.carrier['name']
+        return company_name
+    except Exception as e:
+        Print(f"\nError: {str(e)}")
+        return None
+
 # Render phones on map
 def PointOnMap(valid_numbers):
   myMap = folium.Map(zoom_start=9)
@@ -45,7 +62,7 @@ def PointOnMap(valid_numbers):
     results = opencagegeocoder.geocode(query)
     lat = results[0]['geometry']['lat']
     lng = results[0]['geometry']['lng']
-    point_text = "{}, {}, {}N, {}E".format(item['number'], location, lat, lng)
+    point_text = "{}, {}, {}, {}N, {}E".format(item['number'], location, item['company'], lat, lng)
     html_text += point_text + "<br/>"
     folium.Marker(
       [lat, lng],
@@ -57,17 +74,28 @@ def PointOnMap(valid_numbers):
   webbrowser.open("phones_location.html")
 
 
+@click.command()
+@click.option('-n', '--number', type=str, help='Specify the phone number')
+def main(number):
+    search_numbers = [number]
+
+    results_numbers = {}
+    for n in search_numbers:
+        GetValidNumberPrefixs(results_numbers, n)
+
+    valid_numbers = []
+    FlatDict(valid_numbers, results_numbers)
+    
+    for number_dict in valid_numbers:
+        caller_company = get_company_from_twilio(number_dict['number'])
+        number_dict['company'] = caller_company
+    
+    for number_dict in valid_numbers:
+        print(f"\n{number_dict}")
+
+    PointOnMap(valid_numbers)
 
 
-
-
-search_numbers = ['21079352015', '21079393770']
-
-results_numbers = {}
-for n in search_numbers:
-  GetValidNumberPrefixs(results_numbers, n)
-
-valid_numbers = []
-FlatDict(valid_numbers, results_numbers)
-
-PointOnMap(valid_numbers)
+if __name__=="__main__":
+    main()
+    

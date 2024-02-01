@@ -1,0 +1,1 @@
+### Run: `pipenv install && pipenv run python main.py --number "<phone_number>"`

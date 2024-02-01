@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_dfdf6114dd01760fb8fa73dff949f0ea {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+        
+</head>
+<body>
+    
+    <h3 align="center" style="font-size:11px"><b>+306935530000, Greece, WIND HELLAS TELECOMMUNICATIONS (Nova), 38.9953683N, 21.9877132E<br/>+436935530000, Austria, None, 47.59397N, 14.12456E<br/>+496935530000, Frankfurt am Main, DTAG (Fixed Grandfather TNs), 50.1106444N, 8.6820917E<br/>+556935530000, Rondônia, None, -10.943145N, -62.8277863E<br/>+916935530000, India, None, 22.3511148N, 78.6677428E<br/></br></h3>
+    
+            <div class="folium-map" id="map_dfdf6114dd01760fb8fa73dff949f0ea" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_dfdf6114dd01760fb8fa73dff949f0ea = L.map(
+                "map_dfdf6114dd01760fb8fa73dff949f0ea",
+                {
+                    center: [0.0, 0.0],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 1,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_46688c18b7e57dac745d41beabc8e919 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+        
+    
+            tile_layer_46688c18b7e57dac745d41beabc8e919.addTo(map_dfdf6114dd01760fb8fa73dff949f0ea);
+        
+    
+            var marker_41e3b1b95590af7cdd2545e14d9cdd6c = L.marker(
+                [38.9953683, 21.9877132],
+                {}
+            ).addTo(map_dfdf6114dd01760fb8fa73dff949f0ea);
+        
+    
+        var popup_f0912fe37af9b6017b58fe48cfc207fc = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_5b8a24bcb6bde3be0f3494f50cd7fd7a = $(`<div id="html_5b8a24bcb6bde3be0f3494f50cd7fd7a" style="width: 100.0%; height: 100.0%;">+306935530000, Greece, WIND HELLAS TELECOMMUNICATIONS (Nova), 38.9953683N, 21.9877132E</div>`)[0];
+                popup_f0912fe37af9b6017b58fe48cfc207fc.setContent(html_5b8a24bcb6bde3be0f3494f50cd7fd7a);
+            
+        
+
+        marker_41e3b1b95590af7cdd2545e14d9cdd6c.bindPopup(popup_f0912fe37af9b6017b58fe48cfc207fc)
+        ;
+
+        
+    
+    
+            var marker_5a0801d39424beed69bb6cb2e709da40 = L.marker(
+                [47.59397, 14.12456],
+                {}
+            ).addTo(map_dfdf6114dd01760fb8fa73dff949f0ea);
+        
+    
+        var popup_e7cb6f8f5a433367c94ab8b9ad00b4d0 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_4ed533c7a76f4483684b5e0a8417c892 = $(`<div id="html_4ed533c7a76f4483684b5e0a8417c892" style="width: 100.0%; height: 100.0%;">+436935530000, Austria, None, 47.59397N, 14.12456E</div>`)[0];
+                popup_e7cb6f8f5a433367c94ab8b9ad00b4d0.setContent(html_4ed533c7a76f4483684b5e0a8417c892);
+            
+        
+
+        marker_5a0801d39424beed69bb6cb2e709da40.bindPopup(popup_e7cb6f8f5a433367c94ab8b9ad00b4d0)
+        ;
+
+        
+    
+    
+            var marker_99e200457a2d67cfe12d08d851e344d4 = L.marker(
+                [50.1106444, 8.6820917],
+                {}
+            ).addTo(map_dfdf6114dd01760fb8fa73dff949f0ea);
+        
+    
+        var popup_a0b90846c472a1fe675e318b2eee452e = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_be8f2c4af962516ebf0816f8f31ed8ab = $(`<div id="html_be8f2c4af962516ebf0816f8f31ed8ab" style="width: 100.0%; height: 100.0%;">+496935530000, Frankfurt am Main, DTAG (Fixed Grandfather TNs), 50.1106444N, 8.6820917E</div>`)[0];
+                popup_a0b90846c472a1fe675e318b2eee452e.setContent(html_be8f2c4af962516ebf0816f8f31ed8ab);
+            
+        
+
+        marker_99e200457a2d67cfe12d08d851e344d4.bindPopup(popup_a0b90846c472a1fe675e318b2eee452e)
+        ;
+
+        
+    
+    
+            var marker_85fcc8bf7713982ce89cfeba3a1ee9ee = L.marker(
+                [-10.943145, -62.8277863],
+                {}
+            ).addTo(map_dfdf6114dd01760fb8fa73dff949f0ea);
+        
+    
+        var popup_d0e75cf0e47a9a7751e88ab53740550b = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_abcf3de0f1217e73a25a302010c893b5 = $(`<div id="html_abcf3de0f1217e73a25a302010c893b5" style="width: 100.0%; height: 100.0%;">+556935530000, Rondônia, None, -10.943145N, -62.8277863E</div>`)[0];
+                popup_d0e75cf0e47a9a7751e88ab53740550b.setContent(html_abcf3de0f1217e73a25a302010c893b5);
+            
+        
+
+        marker_85fcc8bf7713982ce89cfeba3a1ee9ee.bindPopup(popup_d0e75cf0e47a9a7751e88ab53740550b)
+        ;
+
+        
+    
+    
+            var marker_2157689f3d935e5eb4ceb9f262170a6d = L.marker(
+                [22.3511148, 78.6677428],
+                {}
+            ).addTo(map_dfdf6114dd01760fb8fa73dff949f0ea);
+        
+    
+        var popup_e0f9ffcd922e8ca9e75973c84a13ce29 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_8c792aedacbc29dd14e838021d9fc045 = $(`<div id="html_8c792aedacbc29dd14e838021d9fc045" style="width: 100.0%; height: 100.0%;">+916935530000, India, None, 22.3511148N, 78.6677428E</div>`)[0];
+                popup_e0f9ffcd922e8ca9e75973c84a13ce29.setContent(html_8c792aedacbc29dd14e838021d9fc045);
+            
+        
+
+        marker_2157689f3d935e5eb4ceb9f262170a6d.bindPopup(popup_e0f9ffcd922e8ca9e75973c84a13ce29)
+        ;
+
+        
+    
+</script>
+</html>
