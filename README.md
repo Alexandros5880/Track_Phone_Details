@@ -1,92 +1,209 @@
-# Phone Details
+# Track Phone Details
 
-Validate and format a phone number and display country, numbering area, line type,
-time zones and the carrier associated with its prefix. Default country: Greece.
-Basic lookup runs locally and needs no API keys.
+Εργαλείο γραμμής εντολών για έλεγχο και μορφοποίηση τηλεφωνικών αριθμών, εμφάνιση βασικών στοιχείων και προαιρετική δημιουργία χάρτη της περιοχής αρίθμησης.
 
-## Run (WSL)
+Η βασική αναζήτηση εκτελείται τοπικά, χωρίς API keys. Προεπιλεγμένη χώρα για αριθμούς χωρίς διεθνή κωδικό είναι η Ελλάδα (`GR`).
+
+> Ο χάρτης δείχνει τη γενική περιοχή αρίθμησης, ενδεχομένως ολόκληρη τη χώρα. Η εφαρμογή δεν εντοπίζει τη θέση της συσκευής, δεν παρακολουθεί μετακινήσεις και δεν αναγνωρίζει τον ιδιοκτήτη του αριθμού.
+
+## Δυνατότητες
+
+- Έλεγχος εγκυρότητας αριθμού σύμφωνα με τα δεδομένα αρίθμησης της βιβλιοθήκης `phonenumbers`.
+- Μετατροπή σε διεθνή μορφή και μορφή E.164.
+- Εμφάνιση χώρας/περιοχής, τύπου γραμμής και σχετικών ζωνών ώρας.
+- Εμφάνιση παρόχου βάσει προθέματος, όπου υπάρχουν διαθέσιμα δεδομένα.
+- Προαιρετική αναζήτηση παρόχου και τύπου γραμμής με Twilio Lookup v2.
+- Προαιρετική γεωκωδικοποίηση μέσω OpenCage και αποθήκευση χάρτη HTML με Folium.
+- Αυτόματη εκκίνηση τοπικού HTTP server και άνοιγμα του χάρτη στον browser, με υποστήριξη Windows browser από WSL.
+- Έξοδος JSON για χρήση από άλλα εργαλεία.
+
+## Απαιτήσεις
+
+- Python **3.12**, όπως ορίζεται στο `Pipfile`.
+- Pipenv.
+- Για τις παρακάτω εντολές: Ubuntu/WSL σε Windows. Η βασική λειτουργία μπορεί επίσης να εκτελεστεί σε περιβάλλον με τις αντίστοιχες εξαρτήσεις Python.
+- Σύνδεση στο διαδίκτυο για εγκατάσταση εξαρτήσεων, Twilio, OpenCage και φόρτωση του υποβάθρου του χάρτη.
+
+## Εγκατάσταση
+
+Μέσα στο WSL terminal:
 
 ```bash
+cd /mnt/c/Users/Alexp/Desktop/Track_Phone_Details
+python3 --version
 pipenv install
-# Διεθνής αριθμός και έξοδος JSON
-pipenv run python main.py --number "+306975954890" --json
+```
 
-# Εθνικός αριθμός άλλης χώρας
+Αν έχεις αποθηκεύσει το project σε άλλο φάκελο, προσαρμόζεις τη διαδρομή. Για εγκατάσταση ακριβώς των εκδόσεων του υπάρχοντος lock file μπορείς να χρησιμοποιήσεις `pipenv sync`.
+
+### Πρώτη εκτέλεση χωρίς κλειδιά
+
+```bash
+pipenv run python main.py --number "6975954890"
+```
+
+Η εντολή εμφανίζει τα τοπικά στοιχεία και τερματίζει. Δεν πραγματοποιεί κλήσεις σε Twilio ή OpenCage.
+
+## Ρύθμιση του `.env`
+
+Τα κλειδιά χρειάζονται μόνο για τις προαιρετικές εξωτερικές υπηρεσίες. Αν δεν υπάρχει ήδη τοπικό `.env`, δημιούργησέ το από το υπόδειγμα:
+
+```bash
+cp -n .env.example .env
+```
+
+Άνοιξε το `.env` στον editor σου και συμπλήρωσε όσα χρησιμοποιείς:
+
+```dotenv
+TWILIO_ACCOUNT_SID=your_twilio_account_sid
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
+OPENCAGE_API_KEY=your_opencage_api_key
+```
+
+| Μεταβλητή | Χρήση | Απαιτείται για |
+| --- | --- | --- |
+| `TWILIO_ACCOUNT_SID` | Account SID του Twilio | `--twilio` |
+| `TWILIO_AUTH_TOKEN` | Auth Token του ίδιου λογαριασμού Twilio | `--twilio` |
+| `OPENCAGE_API_KEY` | Geocoding API key του OpenCage | `--map` |
+
+Το app φορτώνει αυτόματα το `.env` από τον φάκελο του `main.py`. Δεν χρειάζεται `export` κάθε φορά. Μεταβλητές που υπάρχουν ήδη στο περιβάλλον του terminal έχουν προτεραιότητα έναντι του `.env`.
+
+Το `.env` εξαιρείται από το Git. Στο repository ανεβαίνει μόνο το `.env.example` με κενά πεδία. Μην προσθέτεις πραγματικά κλειδιά στον κώδικα, στο README ή στο `.env.example` και μην χρησιμοποιείς `git add -f` για το `.env`.
+
+## Παραδείγματα χρήσης
+
+### Αριθμός Ελλάδας
+
+```bash
+pipenv run python main.py --number "6975954890"
+```
+
+Ο αριθμός ερμηνεύεται ως ελληνικός επειδή το `--region` έχει προεπιλογή `GR`.
+
+### Διεθνής αριθμός
+
+```bash
+pipenv run python main.py --number "+306975954890"
+```
+
+Υποστηρίζεται και πρόθεμα `00` αντί για `+`. Ο διεθνής κωδικός καθορίζει τη χώρα του αριθμού.
+
+### Εθνικός αριθμός άλλης χώρας
+
+```bash
 pipenv run python main.py --number "020 8366 1177" --region GB
-
-# Προαιρετική αναζήτηση μέσω Twilio, με πιθανή χρέωση υπηρεσίας
-pipenv run python main.py --number "6975954890" --twilio
-
-# Προαιρετικός χάρτης, με ρυθμισμένο OPENCAGE_API_KEY
-pipenv run python main.py --number "6975954890" --map phones_location.html
 ```
 
-Use `--help` for all options. International numbers starting with `+` or `00`
-override the default country. Invalid numbers are rejected. Number validity only
-means the format matches a numbering plan; it does not prove an active connection.
-Prefix carrier data can be outdated after number portability.
+Η επιλογή `--region` δέχεται κωδικό χώρας δύο γραμμάτων, όπως `GR`, `GB` ή `DE`.
 
-## Optional Twilio lookup
-
-Set credentials in the same terminal, then explicitly enable the remote lookup.
-Provider charges may apply. This uses Lookup v2 Line Type Intelligence.
+### Αναζήτηση μέσω Twilio
 
 ```bash
-export TWILIO_ACCOUNT_SID='your-account-sid'
-read -rsp 'Twilio Auth Token: ' TWILIO_AUTH_TOKEN; echo
-export TWILIO_AUTH_TOKEN
 pipenv run python main.py --number "6975954890" --twilio
 ```
 
-Missing credentials, API failures and unavailable carrier data produce warnings
-while preserving the local results. No remote calls are made without the option.
+Χρησιμοποιεί το πακέτο `line_type_intelligence` του Twilio Lookup v2. Απαιτεί έγκυρα στοιχεία Twilio και ενδέχεται να επιφέρει χρέωση από τον πάροχο. Η υπηρεσία μπορεί να μην επιστρέψει διαθέσιμα στοιχεία για έναν αριθμό· σε αυτή την περίπτωση εμφανίζεται προειδοποίηση και διατηρούνται τα τοπικά αποτελέσματα.
 
-## Optional map
+### Αποθήκευση χάρτη χωρίς άνοιγμα
 
 ```bash
-read -rsp 'OpenCage API key: ' OPENCAGE_API_KEY; echo
-export OPENCAGE_API_KEY
 pipenv run python main.py --number "6975954890" --map phones_location.html
 ```
 
-Add `--open-map` to start a local HTTP server and open the map URL in your
-browser (including the Windows browser from WSL). Keep the app running while
-viewing the map. Press Ctrl+C in its terminal to stop the app and its server.
-Closing only the browser tab does not stop the app.
+Δημιουργεί το HTML και τερματίζει, χωρίς να ξεκινά server. Το OpenCage λαμβάνει την περιγραφή της περιοχής, όχι τον τηλεφωνικό αριθμό. Αν το αίτημα αποτύχει, δεν δημιουργείται νέος χάρτης και τυχόν παλιό αρχείο παραμένει όπως ήταν.
 
-The app tries port 8000, reuses an existing server only if it returns the exact
-same map, and selects an available port if another application owns port 8000.
-Servers started outside this app are left running. The built-in server binds
-only to 127.0.0.1 and serves only the map, not the project source files.
+### Χάρτης με αυτόματο server και άνοιγμα στον browser
 
 ```bash
 pipenv run python main.py --number "6975954890" --map phones_location.html --open-map
 ```
 
-Without `--open-map`, the command only saves the HTML and exits. OpenCage receives the area
-name, not the phone number. Online map tiles need an internet connection.
-A missing/rejected key, quota failure or empty geocoding result skips the map
-with a warning. No map file is created for a failed request.
+Μετά την επιτυχή δημιουργία του χάρτη:
 
-The map shows the approximate center of a numbering area, sometimes an entire
-country. It does not locate the phone, track its movement, identify its owner,
-or verify whether it is reachable.
+1. Το app ξεκινά τοπικό server ή επαναχρησιμοποιεί κατάλληλο υπάρχοντα.
+2. Εμφανίζει `Map URL: ...` και ανοίγει τη διεύθυνση στον browser.
+3. Παραμένει ενεργό όσο βλέπεις τον χάρτη.
+4. Με **Ctrl+C στο terminal** κλείνει το app και σταματά ο server που ξεκίνησε.
 
-Keep credentials out of source code and version control. The app automatically loads `.env` from the project folder. Existing shell
-environment variables take priority over values in `.env`. The `.env` file is
-excluded from Git; `.env.example` contains only empty configuration fields. Replace any
-credentials previously exposed or committed using the provider console.
+Ο server ακούει μόνο στο `127.0.0.1`. Προτιμά τη θύρα `8000`, αλλά επιλέγει ελεύθερη θύρα αν εκεί εκτελείται άλλη υπηρεσία. Υπάρχων server επαναχρησιμοποιείται μόνο αν επιστρέφει ακριβώς το ίδιο HTML και δεν τερματίζεται από το app. Ο ενσωματωμένος server διαθέτει μόνο τον χάρτη, όχι το `.env` ή τα αρχεία κώδικα.
 
-## Tests
+**Το κλείσιμο της καρτέλας του browser δεν τερματίζει το app.** Σταμάτησέ το με Ctrl+C. Μετά τον τερματισμό του δικού του server, η διεύθυνση HTTP δεν θα εξυπηρετείται πλέον.
+
+### Έξοδος JSON
+
+```bash
+pipenv run python main.py --number "+306975954890" --json
+```
+
+Για αποθήκευση σε αρχείο:
+
+```bash
+pipenv run python main.py --number "+306975954890" --json > result.json
+```
+
+Για χρήση σε scripts, απέφυγε το `--open-map`, το οποίο κρατά το πρόγραμμα ενεργό μέχρι να πατήσεις Ctrl+C.
+
+## Επιλογές
+
+| Επιλογή | Περιγραφή |
+| --- | --- |
+| `-n`, `--number TEXT` | Υποχρεωτικός τηλεφωνικός αριθμός. |
+| `--region TEXT` | Χώρα ερμηνείας εθνικών αριθμών. Προεπιλογή: `GR`. |
+| `--twilio` | Ενεργοποιεί την προαιρετική αναζήτηση μέσω Twilio. |
+| `--map FILE` | Αποθηκεύει χάρτη HTML μέσω OpenCage. |
+| `--open-map` | Απαιτεί `--map`. Ξεκινά/χρησιμοποιεί HTTP server και ανοίγει τον browser. |
+| `--json` | Επιστρέφει τα αποτελέσματα ως JSON. |
+| `--help` | Εμφανίζει τη βοήθεια. |
+
+```bash
+pipenv run python main.py --help
+```
+
+## Πώς διαβάζονται τα αποτελέσματα
+
+- **Εγκυρότητα:** ο αριθμός ταιριάζει σε αναγνωρισμένο πλάνο αρίθμησης. Δεν αποδεικνύεται ότι είναι ενεργός ή προσβάσιμος.
+- **Πάροχος από πρόθεμα:** προκύπτει από τα τοπικά δεδομένα και μπορεί να έχει αλλάξει λόγω φορητότητας.
+- **Περιοχή αρίθμησης:** αφορά τον αριθμό. Για κινητά μπορεί να είναι μόνο η χώρα.
+- **Ζώνες ώρας:** σχετίζονται με την περιοχή αρίθμησης, όχι με τη σημερινή θέση του χρήστη.
+- **Σημείο χάρτη:** είναι αποτέλεσμα γεωκωδικοποίησης της περιγραφής της περιοχής. Δεν είναι συντεταγμένες της συσκευής.
+
+## Αντιμετώπιση προβλημάτων
+
+| Μήνυμα ή σύμπτωμα | Έλεγχος / ενέργεια |
+| --- | --- |
+| Το Pipenv δεν βρίσκει Python 3.12 | Έλεγξε `python3 --version`. Αν ο interpreter σου είναι Python 3.12, δοκίμασε `pipenv --python "$(command -v python3)" install`. |
+| Μη έγκυρος αριθμός | Έλεγξε τον αριθμό και το `--region` ή δώσε διεθνή μορφή με `+`. |
+| OpenCage `unauthorized` | Έλεγξε το `OPENCAGE_API_KEY` στο `.env` και αν είναι ενεργό στον λογαριασμό σου. |
+| OpenCage denied access / rate limit | Έλεγξε κατάσταση λογαριασμού και όρια χρήσης. Για rate limit περίμενε πριν επαναλάβεις. |
+| Twilio authentication error | Έλεγξε ότι το Account SID και το Auth Token ανήκουν στον ίδιο λογαριασμό και είναι έγκυρα. |
+| Twilio επιστρέφει κωδικό αντί για πάροχο | Η κλήση δεν έδωσε διαθέσιμα δεδομένα. Κράτησε τον κωδικό για έλεγχο στην τεκμηρίωση του Twilio. |
+| Ο browser δεν ανοίγει αυτόματα | Άνοιξε χειροκίνητα τη διεύθυνση που εμφανίζεται δίπλα στο `Map URL`. |
+| Ο χάρτης εμφανίζει `403 Access blocked` | Χρησιμοποίησε το HTTP `Map URL`, όχι τη διαδρομή `file://`. Αν παραμένει, έλεγξε τους περιορισμούς του παρόχου υποβάθρου και του δικτύου. |
+| Η θύρα 8000 χρησιμοποιείται | Το app επιλέγει αυτόματα άλλη θύρα, εκτός αν μπορεί να επαναχρησιμοποιήσει τον υπάρχοντα server. |
+
+Σε WSL και Windows χρησιμοποίησε ξεχωριστά εικονικά περιβάλλοντα Python. Ένα Windows virtualenv με φάκελο `Scripts` δεν χρησιμοποιείται ως Linux virtualenv.
+
+## Δοκιμές
 
 ```bash
 pipenv run python -m unittest discover -s tests -v
 ```
 
-Tests use mocks for external services and make no paid API requests.
+Οι δοκιμές καλύπτουν ανάλυση αριθμών, αποτυχίες εξωτερικών υπηρεσιών και λειτουργία/τερματισμό του τοπικού server. Οι εξωτερικές κλήσεις Twilio και OpenCage προσομοιώνονται, ώστε να μη γίνονται κλήσεις με χρέωση. Οι έλεγχοι του HTTP server εκτελούνται τοπικά.
 
-## Local credentials
+## Αρχεία του project
 
-The app reads `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, and `OPENCAGE_API_KEY`
-from the local `.env` file. Keep this file on your computer and never commit it.
-For a fresh checkout, copy `.env.example` to `.env` and fill in your own values.
+| Αρχείο | Περιεχόμενο |
+| --- | --- |
+| `main.py` | Λογική αναζήτησης, CLI, δημιουργία χάρτη και τοπικός server. |
+| `Pipfile` / `Pipfile.lock` | Εξαρτήσεις και κλειδωμένες εκδόσεις. |
+| `.env.example` | Υπόδειγμα μεταβλητών χωρίς κλειδιά. |
+| `.env` | Προσωπικές τοπικές ρυθμίσεις· δεν ανεβαίνουν στο Git. |
+| `tests/test_main.py` | Αυτοματοποιημένες δοκιμές. |
+| `phones_location.html` | Παραγόμενο αρχείο χάρτη. |
+
+## Σχετική τεκμηρίωση
+
+- [Twilio Lookup v2 — Line Type Intelligence](https://www.twilio.com/docs/lookup/v2-api/line-type-intelligence)
+- [OpenCage Geocoding API](https://opencagedata.com/api)
+- [OpenStreetMap tile usage policy](https://operations.osmfoundation.org/policies/tiles/)
